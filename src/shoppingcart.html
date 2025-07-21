@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pure Flave-Shopping cart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-800 h-full flex flex-col">
+  <h3 class="text-center text-lg font-semibold bg-[#d8ebc7]">FREE SHIPPING ON ORDERS OVER $75</h3>
+  <!--Navbar-->
+  <!-- Navbar -->
+  <div class="grid grid-cols-3 items-center p-6 border-b-2 bg-[#f9f9f9]">
+   <div class="text-3xl font-bold pl-6 text-[#3d5a23]"><a href="homepage.html">Pure Flave</a></div>
+    <div class="flex justify-center space-x-6">
+      <div class="text-xl font-semibold text-gray-500 hover:text-green-600"><a href="shop.html"src="shop">Shop</a></div>
+      <div class="text-gray-500 hover:text-green-600 text-xl font-semibold"><a href="subscription.html"src="subscription">Subscription</a></div>
+      <div class="text-gray-500 hover:text-green-600 text-xl font-semibold"><a href="abaoutus.htm"src="abaoutus">Abaout Us</a></div>
+      <div class="text-gray-500 hover:text-green-600 text-xl font-semibold"><a href="contact.html"src="contact">Contact</a></div>
+    </div>
+    <div class="flex justify-end pr-4 space-x-4 bg-[#f9f9f9]">
+      <div class="text-gray-500 hover:text-green-600">🔒 Log In</div>
+      <div class="text-gray-500 hover:text-green-600"><a href="shoppingcart.html">Shopping cart</a></div>
+    </div>
+  </div>
+  
+  
+  <!--Alış Veriş Sepeti-->
+
+
+
+  <main class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded shadow flex-grow">
+    <h1 class="text-3xl font-bold mb-6 text-center text-orange-600">My Shopping Cart</h1>
+
+    <div id="cart-items" class="space-y-4">
+      <!-- Ürünler buraya JS ile gelecek -->
+    </div>
+
+    <div class="mt-8 text-right">
+      <h2 class="text-xl font-semibold">
+        Total: <span id="total-price" class="text-green-600">0 $</span>
+      </h2>
+    </div>
+
+    <div class="mt-6 text-right">
+      <button
+        id="checkout-btn"
+        onclick="checkout()"
+        class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:opacity-50">Buy
+      </button>
+    </div>
+  </main>
+
+  <!--Footer Başlangıç-->
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 bg-gray-100 p-6 text-sm text-gray-600">
+    <div>
+      <div class="font-semibold text-xl"><a href="#" >Terms & Conditions</a></div>
+        <ul>
+          <li class="font-semibold text-xl"><a href="#">Policy</a></li>
+          <li class="font-semibold text-xl"><a href="#">Shipping Policy</a></li>
+          <li class="font-semibold text-xl"><a href="#">Refund Policy</a></li>
+        </ul>
+    </div>
+    <div>
+      <div class="font-semibold text-xl"><a href="#">Cookie Policy</a></div>
+      <div class="font-semibold text-xl"><a href="#">FAQ</a></div>
+      <div class="font-semibold text-xl"><a href="#">Payment Methods</a></div>
+      
+    </div>
+    <div>
+      <div class="font-semibold text-xl"> Adress: </div>
+      <div class="font-semibold text-xl"> 500 Terry Francine St.San Francisco, CA 94158 </div>
+    </div>
+    <div>
+      <div class="font-semibold text-xl"> Contact:</div>
+      <div class="font-semibold text-xl"><a href="mailto:info@mysite.com">info@mysite.com</a></div>
+      <div class="font-semibold text-xl"><a href="tel:123-456-7890">123-456-7890</a></div>
+      <div></div>
+    </div>
+  </div>
+  <script>
+    const cartContainer = document.getElementById("cart-items");
+    const totalPriceSpan = document.getElementById("total-price");
+    const checkoutBtn = document.getElementById("checkout-btn");
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      cartContainer.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p class='text-gray-500 text-center'>Your cart is empty.</p>";
+        checkoutBtn.disabled = true;
+        totalPriceSpan.textContent = "0 USD";
+        return;
+      }
+
+      checkoutBtn.disabled = false;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "flex justify-between items-center border-b pb-2";
+
+        itemDiv.innerHTML = `
+          <div>
+            <p class="font-semibold">${item.name}</p>
+            <p class="text-sm text-gray-600">${item.quantity} x ${item.price} TL</p>
+          </div>
+          <p class="font-semibold text-green-600">${itemTotal} TL</p>
+          <button
+            onclick="removeItem(${index})"
+            class="bg-red-400 text-white px-3 py-1 rounded hover:bg-red-600"
+            title="Ürünü kaldır"
+          >
+            ✕
+          </button>
+        `;
+
+        cartContainer.appendChild(itemDiv);
+      });
+
+      totalPriceSpan.textContent = total + " USD";
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) return;
+
+      // Basit onay penceresi
+      if (confirm("are you sure that you want to complete the purchase?")) {
+        // Ödeme işlemi başarılı gibi simüle edelim
+        alert("Thanks! your order has been received.");
+
+        // Sepeti temizle
+        cart = [];
+        localStorage.removeItem("cart");
+        renderCart();
+      }
+    }
+
+    // Sayfa yüklendiğinde sepeti göster
+    window.onload = renderCart;
+  </script>
+
+</body>
+</html>
